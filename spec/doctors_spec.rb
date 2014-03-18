@@ -1,13 +1,5 @@
-require 'rspec'
-require 'doctors'
+require 'spec_master_splinter'
 
-DB = PG.connect({:dbname => 'doc_data_test'})
-
-RSpec.configure do |config|
-  config.after(:each) do
-    DB.exec("DELETE FROM doctors *;")
-  end
-end
 
 describe Doctors do
 
@@ -20,7 +12,6 @@ describe Doctors do
     it 'should tell you the doctors name' do
       new_doc = Doctors.new('Dr. Kevorkian', 1)
       new_doc.name.should eq "Dr. Kevorkian"
-      new_doc.id.should eq 1
     end
 
     it 'starts off with no doctors' do
@@ -38,6 +29,11 @@ describe Doctors do
       new_doc2 = Doctors.new('Dr. Kevorkian', 1)
       new_doc.should eq new_doc2
     end
-  end
 
+    it 'sets its serial ID when you save the entry' do
+      new_Doctors = Doctors.new('Dr. Kevorkian', 1)
+      new_Doctors.save
+      new_Doctors.id.should be_an_instance_of Fixnum
+    end
+  end
 end

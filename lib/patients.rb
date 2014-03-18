@@ -1,12 +1,14 @@
 require 'pg'
 
 class Patients
-  attr_reader :name, :id, :birthdate
+  attr_reader :name, :id, :birthdate, :insurance_id, :doctor_id
 
-  def initialize(name, id=nil, birthdate)
+  def initialize(name, birthdate, doctor_id, insurance_id, id=nil)
     @name = name
-    @id = id
     @birthdate = birthdate
+    @doctor_id = doctor_id
+    @insurance_id = insurance_id
+    @id = id
   end
 
   def ==(another_patient)
@@ -17,12 +19,18 @@ class Patients
     all_patients = []
     results = DB.exec('SELECT * FROM patients;')
     results.each do |result|
-      all_patients << Patients.new(result['name'], result['id'].to_i, result['birthdate'])
+      name = result['name']
+      birthdate = result['birthdate']
+      id = result['id'].to_i
+      doctor_id = result['doctor_id']
+      insurance_id = result['insurance_id']
+      all_patients << Patients.new(name, birthdate, doctor_id, insurance_id, id)
     end
     all_patients
   end
 
   def save
-    DB.exec("INSERT INTO patients (name, birthdate, id) VALUES ('#{@name}', '#{@birthdate}', '#{@id}');")
+   results = DB.exec("INSERT INTO patients (name, birthdate, doctor_id, insurance_id) VALUES ('#{@name}', '#{@birthdate}', '#{doctor_id}', '#{insurance_id}') RETURNING id;")
+   @id = results.first['id'].to_i
   end
 end
