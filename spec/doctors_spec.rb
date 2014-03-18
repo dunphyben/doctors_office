@@ -20,6 +20,7 @@ describe Doctors do
     it 'should tell you the doctors name' do
       new_doc = Doctors.new('Dr. Kevorkian', 1)
       new_doc.name.should eq "Dr. Kevorkian"
+      new_doc.id.should eq 1
     end
 
     it 'starts off with no doctors' do
